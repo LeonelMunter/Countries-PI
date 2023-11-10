@@ -17,55 +17,17 @@
 //     =====`-.____`.___ \_____/___.-`___.-'=====
 //                       `=---='
 //     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-const axios = require('axios');
+
 const server = require('./src/app.js');
 const { conn } = require('./src/db.js');
-const { Country } = require ('./src/db.js')
-
+const { startServer } = require ('./src/startserver.js')
 // Syncing all the models at once.
 
-// let createData = async () => {
-// const allCountries = Country.findAll();
-// if(!allCountries.length){
-// const apiCountriesResponse = await axios.get('https://restcountries.com/v3/all');
-// let apiCountries = apiCountriesResponse.data.map((e) => {
-//     return {
-//       id: e.cca3,
-//       nombre: e.name.common,
-//       imagenBandera: e.flags[0],
-//       continente: e.continents[0],
-//       capital: e.capital ? e.capital[0] : 'Not found',
-//       subregion: e.subregion,
-//       area: e.area,
-//       poblacion: e.population
-//       }
-//     })
-//       await Country.bulkCreate(apiCountries);
-//       console.log('bbd creada')
-//   }
-// }
-// createData()
 
-conn.sync({force: true}).then(() => {
-  server.listen(process.env.PORT, async() => {
-    const allCountries = Country.findAll();
-    if(!allCountries.length){
-    const apiCountriesResponse = await axios.get('https://restcountries.com/v3/all');
-    let apiCountries = apiCountriesResponse.data.map((e) => {
-        return {
-          id: e.cca3,
-          nombre: e.name.common,
-          imagenBandera: e.flags[0],
-          continente: e.continents[0],
-          capital: e.capital ? e.capital[0] : 'Not found',
-          subregion: e.subregion,
-          area: e.area,
-          poblacion: e.population
-          }
-        })
-          await Country.bulkCreate(apiCountries);
-          console.log('bbd creada')
-      }
+conn.sync({ force: false }).then(() => { //ESTO HAY QUE PASARLO A FALSE SI NO SE RESETEA TODA LA DB
+  server.listen(process.env.PORT || 3001, async () => {
     console.log('%s listening at 3001'); // eslint-disable-line no-console
+    await startServer();
+    console.log('Carga Completa')
   });
 });
